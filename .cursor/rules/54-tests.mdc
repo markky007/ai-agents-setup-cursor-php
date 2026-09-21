@@ -1,0 +1,23 @@
+---
+description: Laravel tests — match Pest or PHPUnit already in the repo
+globs: "tests/**"
+alwaysApply: false
+---
+
+# Tests
+
+Detect the runner from `composer.json` (`pestphp/pest` vs `phpunit/phpunit`). Do not convert Pest ↔ PHPUnit. Do not delete tests without approval.
+
+**Do:** feature tests for HTTP/behavior; factories already in `database/factories`; assert authorization and validation failures; run the narrowest `php artisan test --filter=` that covers the change.
+
+**Don't:** call real third-party APIs; require production secrets; mock the class under test into meaninglessness; rewrite passing tests to match a style guide.
+
+```php
+// Don't — hits a live provider
+Http::get('https://api.stripe.com/v1/charges');
+
+// Do — isolate outbound HTTP the way sibling tests already do
+Http::fake();
+```
+
+Prefer extending an existing test file over a new suite. Boost `testing-best-practices` (if installed in the app) owns Pest/PHPUnit syntax; this rule only constrains project safety.

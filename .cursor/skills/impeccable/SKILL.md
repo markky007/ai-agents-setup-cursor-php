@@ -1,6 +1,6 @@
 ---
 name: impeccable
-description: Design-pass for UI polish, critique, or redesign when the user asks (craft/shape/audit/polish/impeccable). Skip ordinary frontend bugfixes, form/API wiring, and backend-only work. Not a default for every Vue/Quasar edit.
+description: Design-pass for UI polish, critique, or redesign when the user asks (craft/shape/audit/polish/impeccable). Skip ordinary frontend bugfixes, form/API wiring, and backend-only work. Not a default for every Blade/Livewire/Inertia/Vue edit.
 version: 3.1.1
 user-invocable: true
 argument-hint: "[craft|shape · audit|critique · animate|bolder|colorize|delight|layout|overdrive|quieter|typeset · adapt|clarify|distill · harden|onboard|optimize|polish · teach|document|extract|live] [target]"

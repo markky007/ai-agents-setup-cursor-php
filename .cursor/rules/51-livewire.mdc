@@ -1,0 +1,15 @@
+---
+description: Optional Livewire — enable when livewire/livewire is in composer.json
+globs: "app/Livewire/**,resources/views/livewire/**,app/Http/Livewire/**"
+alwaysApply: false
+---
+
+# Livewire (optional)
+
+Copy this rule into the app's `.cursor/rules/` only when Livewire is installed. Skip for API-only apps.
+
+Follow the Livewire major version already in `composer.lock`. Prefer Boost `livewire-development` in the app when Boost installed it.
+
+**Do:** authorize inside the component action; validate with rules already used in sibling components; keep N+1 out of `render()`.
+
+**Don't:** persist raw request arrays onto models; put secrets in public component properties; add Volt unless the app already uses it.

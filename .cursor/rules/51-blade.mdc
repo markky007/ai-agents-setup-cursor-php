@@ -1,0 +1,15 @@
+---
+description: Optional Blade views — enable when the app uses resources/views Blade (not Livewire/Inertia)
+globs: "resources/views/**/*.blade.php,app/View/**"
+alwaysApply: false
+---
+
+# Blade (optional)
+
+Copy this rule into the app's `.cursor/rules/` only when the UI is Blade. Skip for API-only apps.
+
+**Do:** escape with `{{ }}`; `@csrf` on state-changing forms; prepare queries in the controller (no `User::all()` in the template); reuse existing layouts/components.
+
+**Don't:** `{!! $userInput !!}` for untrusted HTML; query Eloquent inside views; introduce a JS SPA when the app is Blade.
+
+Baseline a11y: labels for inputs, keyboard-reachable controls, status not by color alone.

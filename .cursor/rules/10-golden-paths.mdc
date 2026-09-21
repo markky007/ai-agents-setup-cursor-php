@@ -9,7 +9,7 @@ Use after Implementation Core discovery/planning. Keep exploration scoped (Graph
 
 ## Phase 0: Understand (all tasks)
 
-Identify goal, task type, expected post-change behavior, and affected layers. Inspect only patterns and files needed for this task before editing.
+Identify goal, task type, expected post-change behavior, and affected layers. Inspect only patterns and files needed for this task before editing. Read `composer.json` before assuming Pest vs PHPUnit, Sanctum vs Passport, or queue driver.
 
 ## Phase 1: Plan
 
@@ -42,7 +42,7 @@ Never patch symptoms without identifying the root cause.
 1. Behavior that must stay unchanged
 2. Call sites and dependencies
 3. Small, reviewable diffs
-4. Naming/structure/typing/duplication — not unrelated features
+4. Naming/structure/duplication — not unrelated features
 5. Avoid public API changes unless required
 6. Validate; state what behavior was preserved
 

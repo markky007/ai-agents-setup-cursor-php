@@ -1,6 +1,6 @@
 ---
 name: mobile-android-design
-description: Native Android Material 3 and Jetpack Compose. Read only when the user asks for native Android/Compose work. Skip for this Quasar/NestJS web app unless they explicitly ask.
+description: Native Android Material 3 and Jetpack Compose. Read only when the user asks for native Android/Compose work. Skip for this Laravel web/API app unless they explicitly ask.
 ---
 
 # Android Mobile Design

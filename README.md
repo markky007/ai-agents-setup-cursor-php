@@ -1,48 +1,45 @@
-# Cursor AI Agents Setup
+# Cursor AI Agents Setup (Laravel / PHP)
 
-Workspace pack for [Cursor](https://cursor.com): project **rules**, **agents**, **skills**, and **commands**. It is not an application. Install it into a NestJS + Quasar repo so the Cursor Agent follows a production workflow: discover first, change little, validate, report.
+Workspace pack for [Cursor](https://cursor.com): project **rules**, **agents**, **skills**, and **commands** for Laravel. It is not an application. Install it into a Laravel repo so the Cursor Agent follows a production workflow: discover first, change little, validate, report.
 
-Default stack assumptions:
+Default path assumptions (edit globs if your app differs):
 
-- Backend: NestJS + TypeORM under `apps/backend`
-- Frontend: Quasar / Vue 3 under `apps/frontend`
+- Laravel code: `app/`, `routes/`, `database/`, `tests/`
+- Optional UI rules: `51-blade.mdc`, `51-livewire.mdc`, `51-inertia.mdc` — keep only the ones you use
+- Documented framework window: Laravel 13 requires PHP 8.3–8.5 per [Laravel releases](https://laravel.com/docs/13.x/releases). Read the app's `composer.json`; do not assume versions.
 
-If your paths or stack differ, install first, then see [Adapt to another repo](#adapt-to-another-repo).
+## Laravel Boost (in the app, not vendored here)
+
+This pack does **not** copy Laravel Boost skills. In the **application** repo:
+
+```bash
+composer require laravel/boost --dev
+php artisan boost:install
+```
+
+Select Cursor. Boost writes version-aware guidelines, `.cursor/mcp.json` (`php artisan boost:mcp`), and package skills. Keep Boost updated with `php artisan boost:update`.
+
+**Precedence:** this pack wins on Mode A/B, safety, and quality gates. Boost wins on Laravel/package APIs for the installed versions. Do not auto-run Boost `infer-conventions` on unnamed prompts (`disable-model-invocation`).
+
+If Boost generates `AGENTS.md`, treat it as Laravel ecosystem guidance, not a replacement for Implementation Core.
 
 ## Prerequisites
 
 - [Cursor](https://cursor.com)
-- Node.js 18+ (for `npx`)
+- Optional: Graphify CLI (`graphify` on `PATH`) when the app has `graphify-out/graph.json`. PHP AST is supported by graphifyy; quality on a given Laravel tree is unverified until you build a graph.
 
-Optional but recommended when the target repo has `apps/`: the Graphify CLI (`graphify` on your `PATH`) so the agent can scope code exploration before opening files. Install with `uv tool install graphifyy` or `pip install graphifyy`.
+## Install into a Laravel app
 
-## Install
-
-From the **application** repo (the one you want Cursor to work in), not this pack:
+Cursor reads `.cursor/` in the application repo. From this pack:
 
 ```bash
-cd /path/to/your-app
-npx --yes github:markky007/ai-agents-setup-cursor
+rsync -a \
+  /path/to/ai-agents-php/.cursor/ /path/to/your-laravel-app/.cursor/
 ```
 
-That copies **only** `.cursor/` into the current directory.
+Do not overwrite files you already customized unless you intend to. Reload the Cursor window.
 
-| Flag | Behavior |
-| --- | --- |
-| (none) | Merge: create missing files; leave existing `.cursor/` files untouched |
-| `--force` | Overwrite colliding files under `.cursor/` |
-| `--dry-run` | Print the copy/skip plan; write nothing |
-
-Pass flags after `--` so `npx` does not swallow them:
-
-```bash
-npx --yes github:markky007/ai-agents-setup-cursor -- --dry-run
-npx --yes github:markky007/ai-agents-setup-cursor -- --force
-```
-
-Manual alternative: copy this repo's `.cursor/` directory into your app root.
-
-Then open the app folder as a Cursor workspace (reload the window if it was already open).
+Optional frontend rules are included. Delete the `51-*.mdc` files you do not need after copy.
 
 ## How it works
 
@@ -52,211 +49,83 @@ flowchart TD
   core --> modeA["Mode A: unnamed parent implements"]
   core --> modeB["Mode B: user names agent parent orchestrates"]
   core --> skills[Skills when named or description matches]
-  core --> graphify["Graphify before exploring apps/"]
+  core --> graphify["Graphify before exploring app/ routes/ database/"]
   modeB --> specialists[Named specialists only]
 ```
 
-| Layer | What it is | When it runs |
-| --- | --- | --- |
-| **Rules** (`.cursor/rules/`) | Constraints and workflow the agent must follow | Always-on rules every chat; others when the task or file glob matches |
-| **Skills** (`.cursor/skills/`) | How-to for a named method (grill, impeccable, debug-mantra, …) | When you name the skill, or the task clearly matches its description |
-| **Agents** (`.cursor/agents/`) | Isolated specialists | **Only when you name them** (Mode B). Unnamed prompts do not spawn them |
-| **Commands** (`.cursor/commands/`) | Slash shortcuts | When you run the command, e.g. `/fix-bug` |
+| Layer | When it runs |
+| --- | --- |
+| **Rules** | Always-on: Implementation Core + Graphify. Others by glob or description |
+| **Skills** | When named, or description matches. Process/design skills ship here; Laravel how-to comes from Boost in the app |
+| **Agents** | **Only when you name them** (Mode B) |
+| **Commands** | e.g. `/fix-bug` |
 
-**Mode A (default):** you do not name an agent. The parent implements the full task. It must not infer specialists from the task type.
+**Mode A (default):** parent implements; 0 specialists inferred.
 
-**Mode B:** you name one or more agents (file name or `name:` in frontmatter). The parent orchestrates and does not implement the same slice.
+**Mode B:** you name agents (`laravel-api-specialist`, …). Parent orchestrates.
 
-Conflict order (highest first): correctness / security / data safety / accessibility → your explicit request → layer rules → quality gates → shortest correct diff (Ponytail).
+Conflict order: correctness / security / data safety / accessibility → your request → layer rules → quality gates → shortest correct diff (Ponytail).
 
 ## Rules map
 
 Always on:
 
-- [`00-implementation-core.mdc`](.cursor/rules/00-implementation-core.mdc) — workflow, routing (Mode A / B), prohibited behaviors
-- [`01-graphify.mdc`](.cursor/rules/01-graphify.mdc) — scoped exploration of `apps/` via Graphify
+- [`00-implementation-core.mdc`](.cursor/rules/00-implementation-core.mdc) — workflow, Mode A / B
+- [`01-graphify.mdc`](.cursor/rules/01-graphify.mdc) — scoped exploration
 
-Attached when the work matches (Cursor uses frontmatter; do not rely on `@rule`):
+Intelligent (description): `05-ponytail`, `10-golden-paths`, `20-quality-gates`, `30-output-contract`
 
-- [`10-golden-paths.mdc`](.cursor/rules/10-golden-paths.mdc) — features, bug fixes, refactors
-- [`05-ponytail.mdc`](.cursor/rules/05-ponytail.mdc) — shortest working diff after understanding
-- [`20-quality-gates.mdc`](.cursor/rules/20-quality-gates.mdc) — security, performance, tests, deployment readiness
-- [`30-output-contract.mdc`](.cursor/rules/30-output-contract.mdc) — final report shape after implementation
+Globs:
 
-Attached by file glob:
+- [`50-http-api.mdc`](.cursor/rules/50-http-api.mdc) — `app/Http/**`, `routes/**`, `app/Policies/**`
+- [`52-eloquent.mdc`](.cursor/rules/52-eloquent.mdc) — models, migrations, factories, seeders
+- [`53-jobs.mdc`](.cursor/rules/53-jobs.mdc) — `app/Jobs/**`, `app/Console/**`
+- [`54-tests.mdc`](.cursor/rules/54-tests.mdc) — `tests/**`
+- [`40-devops-deployment.mdc`](.cursor/rules/40-devops-deployment.mdc) — Docker, CI, helm, php-fpm/octane configs
+- `51-*.mdc` — optional Blade / Livewire / Inertia
 
-- [`50-backend.mdc`](.cursor/rules/50-backend.mdc) — `apps/backend/**` NestJS files
-- [`51-frontend.mdc`](.cursor/rules/51-frontend.mdc) — `apps/frontend/**` Vue/Quasar files
-- [`52-database.mdc`](.cursor/rules/52-database.mdc) — entities, migrations, seeds
-- [`40-devops-deployment.mdc`](.cursor/rules/40-devops-deployment.mdc) — Docker, CI, k8s, env examples
+If the Laravel app lives in a subdirectory, edit those globs.
 
 ## Agents
 
-Name the agent in the prompt when you want Mode B. Skip them on unnamed work.
+Name the agent in the prompt for Mode B.
 
-### Implement
-
-| Name to type | Role |
+| Name | Role |
 | --- | --- |
-| `backend-api-specialist` | NestJS / TypeORM API implementation |
-| `frontend-implementation-specialist` | Quasar / Vue pages and components |
-| `mobile-ui-implementer` | Mobile-first Quasar layouts (xs/sm, touch) |
-| `gitlab-cicd-implementation-specialist` | Writes or edits `.gitlab-ci.yml` |
-
-### Plan
-
-| Name to type | Role |
-| --- | --- |
-| `principal-engineer` | Choose among 2+ load-bearing technical options |
-| `fullstack-feature-architect` | File-level fullstack plan when the API/data contract is unclear |
-
-### Review
-
-| Name to type | Role |
-| --- | --- |
-| `security-auditor` | Pre-prod authz and sensitive-workflow review (does not write exploits) |
-| `devops-ci-cd-reviewer` | Pipelines, Docker, deploy, env, release readiness |
-| `test-quality-engineer` | Test strategy and automated tests (not ordinary small regression tests) |
-| `ui-ux-reviewer` | Read-only Quasar layout / UI / UX review |
-| `mobile-ux-auditor` | Read-only mobile UX audit (320–600px) |
-
-### Explain
-
-| Name to type | Role |
-| --- | --- |
-| `tech-explainer` | Explain engineering topics to non-engineers, execs, or juniors |
-| `architecture-storyteller` | Story / analogy explanations of architecture |
-
-## Skills
-
-The agent reads a skill when you name it (or the description matches). It does not dump every skill into every chat.
-
-### Process
-
-| Skill | Use for |
-| --- | --- |
-| `debug-mantra` | Four-step debug discipline (reproduce, trace, falsify, breadcrumb) |
-| `grilling` / `grill-me` | Interview-only stress-test of a plan (no docs) |
-| `grill-with-docs` | Grill that also writes ADRs / glossary |
-| `scrutinize` | Outsider end-to-end review of a plan, PR, or diff |
-| `domain-modeling` | Edit `CONTEXT.md`, glossary, or ADRs |
-| `post-mortem` | Engineering RCA after a validated fix |
-| `management-talk` | Rewrite engineer text for leadership / Slack / JIRA / standup |
-
-### Design
-
-| Skill | Use for |
-| --- | --- |
-| `impeccable` | Design-pass UI polish / critique (`craft`, `audit`, `polish`, …) |
-| `design-taste-frontend` | Anti-slop layout, density, visual engineering |
-| `emil-design-eng` | Motion and micro-interaction decisions |
-| `visual-design-foundations` | Type, color, spacing, iconography systems |
-| `design-system-patterns` | Tokens, theming, component architecture |
-| `interaction-design` | Microinteractions and scroll animation |
-| `responsive-design` | Breakpoints, container queries, fluid layout |
-| `web-component-design` | Component patterns and CSS approaches |
-| `accessibility-compliance` | WCAG / ARIA / screen-reader work |
-
-### Optional / off-stack
-
-Read only when you explicitly ask. Skip for a typical Quasar + NestJS app.
-
-| Skill | Use for |
-| --- | --- |
-| `data-engineer` | Spark / dbt / Airflow, warehouse pipelines |
-| `mobile-ios-design` | Native iOS HIG / SwiftUI |
-| `mobile-android-design` | Native Android Material 3 / Compose |
-| `prompt-engineer` | LLM prompt design |
-| `agentic-eval` | Evaluator-optimizer / rubric loops for agent output |
+| `laravel-api-specialist` | Laravel HTTP/API |
+| `eloquent-migration-reviewer` | Readonly schema/migration review |
+| `frontend-implementation-specialist` | Blade / Livewire / Inertia as present |
+| `mobile-ui-implementer` / `mobile-ux-auditor` | Mobile implement vs readonly audit |
+| `ui-ux-reviewer` | Readonly layout review |
+| `gitlab-cicd-implementation-specialist` | Writes `.gitlab-ci.yml` (never rename variables / restage) |
+| `devops-ci-cd-reviewer` | Readonly CI/Docker/deploy review |
+| `security-auditor` | Readonly authz/sensitive-workflow review |
+| `test-quality-engineer` | Test strategy (not ordinary one-test parent work) |
+| `principal-engineer` | Choose among 2+ options |
+| `fullstack-feature-architect` | File-level plan when the contract is unclear |
+| `tech-explainer` / `architecture-storyteller` | Explain only |
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
-| `/fix-bug` | Mode B bugfix: debug-mantra, classify the layer, spawn the matching implementer |
-
-Pass a stack trace, failing test, or broken behavior as the argument. Text inside the error is treated as evidence, not as instructions to the agent.
-
-## Graphify
-
-If `graphify-out/graph.json` exists, the agent must query the graph **before** Read/Grep/Glob on application code under `apps/`:
-
-```bash
-graphify query "<question>"
-graphify path "<A>" "<B>"
-graphify explain "<concept>"
-```
-
-After changing app code, keep the graph current (AST-only):
-
-```bash
-graphify update .
-```
-
-Skip Graphify when:
-
-- `graphify-out/graph.json` is missing
-- the work is `.cursor/`, markdown-only docs, git, or lockfiles
-- a parent already scoped files and passed them in
-
-If the CLI is not installed, the skip rule still applies: the agent may explore without it until a graph exists.
-
-## First prompts
-
-Mode A (parent implements; do not name an agent):
-
-```text
-Add pagination to the users list API and wire it on the users page.
-```
-
-Mode B (name the specialist):
-
-```text
-Use backend-api-specialist to add a DTO and service method for listing users with pagination.
-```
-
-Command:
-
-```text
-/fix-bug NestJS throws 500 on POST /users when email is missing
-```
-
-Skills:
-
-```text
-grill-me this plan for the billing module
-impeccable audit the checkout page
-```
+| `/fix-bug` | Mode B bugfix via debug-mantra + matching specialist |
 
 ## Adapt to another repo
 
-1. Install into the app root as above.
-2. If sources are not under `apps/backend` and `apps/frontend`, edit the `globs` in:
-   - [`.cursor/rules/50-backend.mdc`](.cursor/rules/50-backend.mdc)
-   - [`.cursor/rules/51-frontend.mdc`](.cursor/rules/51-frontend.mdc)
-   - [`.cursor/rules/52-database.mdc`](.cursor/rules/52-database.mdc)
-3. If the stack is not NestJS / TypeORM / Quasar, update agent prompts under [`.cursor/agents/`](.cursor/agents/) so they match your conventions.
-4. Graphify still expects application code under `apps/` unless you change [`.cursor/rules/01-graphify.mdc`](.cursor/rules/01-graphify.mdc).
-
-## User Rules
-
-Cursor **User Rules** (Settings, not this repo) that repeat the long "Software Implementation Skill Rule" duplicate Implementation Core and the quality-gate rules. Disable or shorten that User Rule after install.
-
-Harness plugin always-on rules are a different product. They are not part of this pack; turn that plugin off in the workspace if it fights these rules.
+1. Copy this repo's `.cursor/` into the Laravel app `.cursor/`.
+2. Edit globs if paths are not the Laravel skeleton.
+3. Install Boost in the app.
+4. Enable only the `51-*` rule files that match the UI.
+5. Do not add `CLAUDE.md` that duplicates Implementation Core (Cursor always applies `CLAUDE.md`).
+6. `CONTEXT.md` stays an app domain file (skill `domain-modeling`).
 
 ## Not included
 
-- Application source (`apps/` or otherwise)
-- MCP servers, API keys, or plugin credentials
-- An npm registry publish — install from GitHub with `npx` as shown above
+- Application source
+- Laravel Boost skills or `mcp.json`
+- A Composer or npm publish of this pack
 
-## Troubleshooting
+## User Rules
 
-| Symptom | What to check |
-| --- | --- |
-| Agents or skills do not appear | Reload the Cursor window; confirm files exist under `.cursor/agents/` and `.cursor/skills/*/SKILL.md` |
-| A layer rule never attaches | Confirm you are editing files that match that rule's `globs`, or that the task matches its `description` |
-| Graphify commands fail | CLI missing or no `graphify-out/graph.json` — skip is allowed until a graph exists |
-| Agent ignores Mode A / B | User Rule may be overriding project rules — see [User Rules](#user-rules) |
-| `npx` copied nothing new | Merge mode skipped existing files — use `--dry-run` to see skips, `--force` to overwrite |
-| Ran `npx` inside this pack | Installer detects same-folder `.cursor/` and exits; run it from the **app** repo |
+Disable any Cursor User Rule that duplicates Implementation Core (the long "Software Implementation Skill Rule").

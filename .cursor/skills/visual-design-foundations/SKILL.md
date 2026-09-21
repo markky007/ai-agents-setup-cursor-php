@@ -1,6 +1,6 @@
 ---
 name: visual-design-foundations
-description: Typography, color, spacing, and iconography systems. Read when establishing tokens or a style guide. Skip ordinary UI edits that should follow the existing Quasar theme.
+description: Typography, color, spacing, and iconography systems. Read when establishing tokens or a style guide. Skip ordinary UI edits that should follow the existing theme.
 ---
 
 # Visual Design Foundations

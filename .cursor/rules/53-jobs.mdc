@@ -1,0 +1,34 @@
+---
+description: Laravel queued jobs and console commands — timeouts, retries, idempotency
+globs: "app/Jobs/**,app/Console/**"
+alwaysApply: false
+---
+
+# Jobs & console
+
+Match the app's existing job pattern (`ShouldQueue`, connection, queue name). Inspect `config/queue.php` before assuming Redis/Horizon/database.
+
+**Do:** make side-effectful jobs idempotent; keep `$timeout` below `retry_after`; use `ShouldBeUnique` when duplicate dispatches would corrupt state; implement `failed()` when domain state must update after exhaustion.
+
+**Don't:** retry permanent validation failures; dispatch the same non-unique job on every request without a uniqueness key; log payloads that contain secrets.
+
+```php
+// Don't — unbounded retries, no uniqueness
+class SyncInvoice implements ShouldQueue
+{
+    public $tries = 0;
+}
+
+// Do — bounded backoff + unique per invoice
+class SyncInvoice implements ShouldQueue, ShouldBeUnique
+{
+    public $tries = 4;
+    public $backoff = [1, 5, 10];
+    public function uniqueId(): string
+    {
+        return (string) $this->invoice->id;
+    }
+}
+```
+
+If Horizon is not in `composer.json`, do not add it. If it is, follow existing `horizon.php` rather than inventing supervisors.

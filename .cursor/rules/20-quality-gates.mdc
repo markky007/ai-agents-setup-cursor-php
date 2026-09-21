@@ -7,13 +7,15 @@ alwaysApply: false
 
 Apply every **relevant** gate before finishing. Gates outrank Ponytail minimalism when they conflict.
 
+Read `composer.json` / `composer.lock` and existing scripts before choosing commands. Do not invent npm, ESLint, or typecheck steps for a PHP app.
+
 ## Security
 
-- No hardcoded secrets; tokens/passwords/private keys/API keys stay backend-only
+- No hardcoded secrets; tokens/passwords/private keys/API keys stay server-only
 - No sensitive data logged
-- Backend authorization enforced; frontend checks are never the only protection
-- Input validated and sanitized
-- Injection, XSS, CSRF, SSRF, path traversal, open redirects considered where applicable
+- Backend authorization enforced (Policy, Gate, or FormRequest `authorize()`); frontend checks are never the only protection
+- Input validated (FormRequest or equivalent already used in the app)
+- Injection, XSS, CSRF, SSRF, path traversal, open redirects, mass assignment considered where applicable
 - Stack traces and internal errors not exposed to users
 
 If the task touches auth, roles, users, payments, credentials, files, or sensitive records, explicitly review security impact.
@@ -21,10 +23,10 @@ If the task touches auth, roles, users, payments, credentials, files, or sensiti
 ## Performance
 
 - No unbounded queries; no avoidable N+1; no needless round trips
-- Large workloads: pagination, batching, streaming, chunking, queues, or background jobs
-- No expensive work in render/request loops
-- Caching only when invalidation is clear
-- Prefer DB-side filtering for large datasets; no blocking work on request/response paths
+- Large workloads: pagination, `chunk`/`lazy`, queues, or jobs
+- No expensive work on the request path
+- Caching only when invalidation is clear; use `config()`, not `env()`, in application code
+- Prefer DB-side filtering for large datasets
 
 Performance work must not reduce correctness, security, or maintainability.
 
@@ -34,14 +36,21 @@ Performance work must not reduce correctness, security, or maintainability.
 - Guard clauses over deep nesting; no duplicated logic; no magic numbers
 - No unused imports/variables, dead code, or obsolete comments
 - Comments explain why, not what
-- Preserve existing formatting, lint, and typing rules
+- Preserve existing formatting (Pint if installed) and static analysis (PHPStan/Larastan if installed)
 - No unnecessary dependencies, speculative abstractions, or unrelated file changes
 
-Avoid `any`, unsafe casts, disabled lint rules, and broad try/catch unless unavoidable — if unavoidable, isolate and explain.
+Avoid disabled Pint/PHPStan rules and broad try/catch unless unavoidable — if unavoidable, isolate and explain.
 
 ## Testing & validation
 
-Run the most relevant available commands from project scripts (lint, typecheck, test variants, build, format check, migration test, docker build, CI dry run). Use the repo's package manager. Do not invent commands. Do not claim a command ran unless it did.
+Run the most relevant **existing** commands, for example:
+
+- `vendor/bin/pint --dirty` (or the project's pint script)
+- `vendor/bin/phpstan` / `./vendor/bin/phpstan analyse` if Larastan/PHPStan is in composer
+- `php artisan test` (Pest or PHPUnit as already installed)
+- `composer audit` when dependency changes warrant it
+
+Use Composer. Do not invent commands. Do not claim a command ran unless it did.
 
 If validation cannot run, state which command, why not, and what manual verification was done.
 
@@ -49,8 +58,8 @@ Ponytail's "one check" for non-trivial logic supplements — it does not replace
 
 ## Deployment readiness
 
-- Required env vars documented; no secrets exposed
-- Build works or is documented
+- Required env vars documented in `.env.example`; no secrets exposed
+- `php artisan config:cache` compatibility: no `env()` outside config files
 - Migrations safe and ordered; backward compatibility where required
 - API contract changes documented; rollback noted when relevant
 - Health/readiness considered for deployment work

@@ -17,7 +17,7 @@ Stop at the first rung that holds:
 
 1. Does this need to be built at all? (YAGNI)
 2. Does it already exist in this codebase? Reuse it — do not rewrite
-3. Does the standard library already do this? Use it
+3. Does the standard library or Laravel already do this? Use it (`artisan make:` when creating framework types)
 4. Does a native platform feature cover it? Use it
 5. Does an already-installed dependency solve it? Use it
 6. Can this be one clear line without hurting readability or edge-case correctness? Prefer that
@@ -35,12 +35,12 @@ Root cause, not symptom. Prefer Graphify (`path` / `query`) to find callers of t
 - Deletion over addition when behavior is preserved; boring over clever; fewest files possible
 - Shortest **correct** working diff wins — wrong-place small diffs do not count
 - Question complex requests: "Do you actually need X, or does Y cover it?"
-- When two stdlib approaches are the same size, pick the edge-case-correct one
+- When two framework approaches are the same size, pick the edge-case-correct one
 - Mark deliberate simplifications that cut a real corner with a known ceiling (global lock, O(n²) scan, naive heuristic) with a `ponytail:` comment naming the ceiling and upgrade path
 
 ## Not lazy about
 
-Understanding the problem; input validation at trust boundaries; error handling that prevents data loss; security; accessibility; hardware/platform calibration when relevant; anything the user explicitly requested; existing project validation (lint/typecheck/tests per quality gates).
+Understanding the problem; input validation at trust boundaries; error handling that prevents data loss; security; accessibility; hardware/platform calibration when relevant; anything the user explicitly requested; existing project validation (Pint, PHPStan/Larastan, tests per quality gates).
 
 ## Checks
 

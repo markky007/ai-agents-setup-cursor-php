@@ -1,6 +1,7 @@
 ---
 name: tech-explainer
 model: inherit
+readonly: true
 description: Explains engineering topics to non-engineers, execs, or juniors. Invoke only when the user names this agent. Skip: unnamed prompts (parent replies directly).
 ---
 

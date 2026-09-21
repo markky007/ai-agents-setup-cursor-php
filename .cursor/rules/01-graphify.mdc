@@ -1,34 +1,36 @@
 ---
-description: graphify knowledge graph for scoped app code exploration under apps/
+description: graphify knowledge graph for scoped Laravel app exploration
 alwaysApply: true
 ---
 
 # Graphify
 
-This project has a graphify knowledge graph at `graphify-out/` (built on `apps/` — NestJS backend + Quasar frontend). Use it to discover how application data and code connect **before** opening app source files, so you only touch files that are actually relevant.
+When `graphify-out/graph.json` exists, use it to discover how application code connects **before** opening source files, so you only touch files that are actually relevant.
+
+Default indexed roots for this pack: `app/`, `routes/`, `database/`, `resources/views/`, `tests/`. If the Laravel app lives in a subdirectory, query that tree instead — do not assume a different layout.
 
 ## When Graphify is mandatory
 
-Before using Read, Grep, Glob, or Shell to explore **application code, data-flow, or architecture** under `apps/`, run Graphify first:
+Before using Read, Grep, Glob, or Shell to explore **application code, data-flow, or architecture** under those roots, run Graphify first:
 
 - `graphify query "<question>"` — scoped subgraph
 - `graphify path "<A>" "<B>"` — dependency / data path between symbols
 - `graphify explain "<concept>"` — nodes related to a concept, with source files
 
-This applies to you and every subagent that explores application code **unless the skip conditions below already hold**. Include this requirement in subagent prompts only when the subagent must discover `apps/` itself.
+This applies to you and every subagent that explores application code **unless the skip conditions below already hold**. Include this requirement in subagent prompts only when the subagent must discover application code itself.
 
 **Workflow for app code:**
 
 1. Run a graphify query/path/explain to scope relevant files and relationships
 2. Open with Read/Grep/Glob **only** files Graphify surfaced (or clearly adjacent files needed to edit/debug those)
-3. After changing application code under `apps/`, run `graphify update .` to keep the graph current (AST-only)
+3. After changing application code, run `graphify update .` to keep the graph current (AST-only)
 
 ## When Graphify is optional / skip
 
 Skip Graphify for paths the graph does not usefully index, including:
 
-- `.cursor/rules`, `.cursor/skills`, agent prompts, and editor config
-- Pure docs/planning under `_bmad*`, markdown-only docs with no code symbols
+- `.cursor/` rules/agents/skills, and editor config
+- Pure docs/planning, markdown-only docs with no code symbols
 - Git metadata, lockfiles, and one-off shell/git status checks
 
 You may also use Read/Grep/Glob without Graphify when:
@@ -36,6 +38,8 @@ You may also use Read/Grep/Glob without Graphify when:
 1. Graphify has already oriented you and you are modifying/debugging specific lines it surfaced
 2. `graphify-out/graph.json` does not exist yet
 3. The parent already ran Graphify (or listed exact files/symbols) and passed that scope into this turn or into a subagent prompt — do not re-query from scratch
+
+If the CLI is not installed, the skip rule still applies: the agent may explore without it until a graph exists.
 
 ## Navigation tips
 

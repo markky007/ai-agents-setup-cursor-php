@@ -1,5 +1,6 @@
 ---
-description: Diagnose and fix a bug or error by routing to the matching project specialist (backend, frontend, CI). Use with /fix-bug plus a stack trace, failing test, or broken behavior.
+name: fix-bug
+description: Diagnose and fix a bug or error by routing to the matching project specialist (HTTP, Eloquent, frontend, CI). Use with /fix-bug plus a stack trace, failing test, or broken behavior.
 ---
 
 # /fix-bug
@@ -21,16 +22,16 @@ $ARGUMENTS
 ## Instructions
 
 1. Read `.cursor/skills/debug-mantra/SKILL.md` immediately. Recite the mantra verbatim once in your first reply, then apply the four steps in order.
-2. Classify the layer from the evidence using the routing table below. If classification is still unclear after Graphify + the error, ask **one** question (backend / frontend / CI) and wait. Do not guess by spawning multiple agents.
-3. Reproduce before spawning. Capture a fast pass/fail signal (failing test, curl, CLI, or exact UI steps). If there is no reliable repro, stop and ask for env access or artifacts. Do not hypothesise a fix.
-4. Before exploring application code under `apps/`, run Graphify (`graphify query`, `graphify path`, or `graphify explain`). Pass only the scoped files into the specialist prompt.
+2. Classify the layer from the evidence using the routing table below. If classification is still unclear after Graphify + the error, ask **one** question (HTTP / Eloquent / frontend / CI) and wait. Do not guess by spawning multiple agents.
+3. Reproduce before spawning. Capture a fast pass/fail signal (failing `php artisan test`, curl, CLI, or exact UI steps). If there is no reliable repro, stop and ask for env access or artifacts. Do not hypothesise a fix.
+4. Before exploring application code under `app/`, `routes/`, or `database/`, run Graphify (`graphify query`, `graphify path`, or `graphify explain`) when `graphify-out/graph.json` exists. Pass only the scoped files into the specialist prompt.
 5. Spawn the specialist with Task. The specialist prompt must include: symptom, repro, Graphify-scoped files, instruction to find root cause then apply the smallest safe fix, and "do not touch unrelated files."
-6. After the specialist returns, run available validation (lint / typecheck / targeted test / build scripts already in the repo). Do not add a large regression suite. Do not spawn `test-quality-engineer` unless the user names it.
+6. After the specialist returns, run available validation (`vendor/bin/pint --dirty`, PHPStan if present, targeted `php artisan test`). Do not add a large regression suite. Do not spawn `test-quality-engineer` unless the user names it.
 7. Report using the output format below.
 
 ### Cross-layer and CI-check order
 
-- Backend + frontend both broken: spawn `backend-api-specialist` first (contract), wait, then spawn `frontend-implementation-specialist`.
+- HTTP + frontend both broken: spawn `laravel-api-specialist` first (contract), wait, then spawn `frontend-implementation-specialist`.
 - User provided a PR CI check URL or check name: spawn built-in `ci-investigator` first, then the specialist for the layer it names.
 - Docker / env / deploy files that must change: spawn `devops-ci-cd-reviewer` and **explicitly instruct it to modify the files**.
 
@@ -38,12 +39,13 @@ $ARGUMENTS
 
 | Signal | Spawn |
 |---|---|
-| NestJS, TypeORM, DTO, API, DB, backend 500 | `backend-api-specialist` |
-| Vue / Quasar, Pinia, page, form | `frontend-implementation-specialist` |
+| HTTP 4xx/5xx, FormRequest, Policy, route, controller | `laravel-api-specialist` |
+| Migration, Eloquent, N+1, schema, mass assignment | `laravel-api-specialist` (and `eloquent-migration-reviewer` only if the user named it) |
+| Blade / Livewire / Inertia page, form | `frontend-implementation-specialist` |
 | Mobile layout xs/sm, touch | `mobile-ui-implementer` |
 | `.gitlab-ci.yml` job or YAML | `gitlab-cicd-implementation-specialist` |
 | Docker, env, deploy, pipeline config that must change | `devops-ci-cd-reviewer` (instruct to edit) |
-| Both FE and BE | both specialists, backend then frontend |
+| Both UI and HTTP | both specialists, HTTP then frontend |
 | PR CI check URL or check name | `ci-investigator`, then the matching specialist |
 
 ## Constraints
@@ -76,16 +78,16 @@ Do **not**:
 
 ## Examples
 
-**Example 1 — backend**
-Input: `QueryFailedError: Unknown column 'deptId' in 'field list'` from a NestJS service.
-Spawn: `backend-api-specialist` only.
+**Example 1 — HTTP**
+Input: `SQLSTATE[42S22]: Column not found: 1054 Unknown column 'dept_id'` from a controller.
+Spawn: `laravel-api-specialist` only.
 
 **Example 2 — frontend**
-Input: Quasar dialog submit does nothing; network tab shows no request.
+Input: Livewire submit does nothing; network tab shows no request.
 Spawn: `frontend-implementation-specialist` only.
 
 **Example 3 — GitLab CI**
-Input: job `frontend:test` fails with a YAML `script` syntax error in `.gitlab-ci.yml`.
+Input: job `php:test` fails with a YAML `script` syntax error in `.gitlab-ci.yml`.
 Spawn: `gitlab-cicd-implementation-specialist` only.
 
 **Negative example**

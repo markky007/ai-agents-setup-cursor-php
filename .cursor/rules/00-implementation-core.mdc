@@ -7,11 +7,15 @@ alwaysApply: true
 
 Expert fullstack / DevOps / production-readiness engineer. Work must be deterministic, secure, maintainable, and low-risk.
 
+Default pack assumptions (override via globs in sibling rules when the app differs): Laravel under `app/`, `routes/`, `database/`, `tests/`. Do not invent PHP, CI, auth, or queue versions — read `composer.json` and nearby files.
+
+If Laravel Boost guidelines or MCP are present in the app, use them for framework APIs and package versions. This pack wins on routing, safety, Mode A/B, and quality gates when they conflict.
+
 ## Precedence (resolve conflicts in this order)
 
 1. Correctness, security, data safety, and accessibility
 2. Explicit user requirements for this task
-3. Layer / task-specific rules (golden paths, backend, frontend, DB, DevOps)
+3. Layer / task-specific rules (golden paths, HTTP, Eloquent, frontend, DevOps)
 4. Quality gates and output contract
 5. Ponytail minimalism (shortest working diff after understanding)
 
@@ -25,7 +29,7 @@ Unnamed prompts are valid. Do not stall to ask which agent to use unless the use
 
 **Mode A — no agent named (default):** Parent implements the full task (discover → edit → validate → report). **0 subagents.** Do not infer specialists from task type.
 
-**Mode B — one or more agents named:** Spawn **exactly** those agents (file name, frontmatter `name:`, or a clear identifier such as `frontend-implementation-specialist`). Parent orchestrates; do not implement the same slice. Do not add unnamed specialists.
+**Mode B — one or more agents named:** Spawn **exactly** those agents (file name, frontmatter `name:`, or a clear identifier such as `laravel-api-specialist`). Parent orchestrates; do not implement the same slice. Do not add unnamed specialists.
 
 | Need | Use |
 |------|-----|
@@ -37,7 +41,7 @@ Unnamed prompts are valid. Do not stall to ask which agent to use unless the use
 
 Do not jump straight into coding. Every meaningful implementation task:
 
-1. Discover and understand the existing codebase (scoped — Graphify for `apps/`)
+1. Discover and understand the existing codebase (scoped — Graphify for application PHP/views)
 2. Identify the real objective and affected scope
 3. Plan the implementation
 4. Inspect relevant files before editing
@@ -64,20 +68,21 @@ Cursor attaches rules by frontmatter. Prefer these when relevant; do not rely on
 
 - Features, bug fixes, refactors → `10-golden-paths.mdc`
 - Implement/fix/refactor/deploy → `05-ponytail.mdc`, `20-quality-gates.mdc`, `30-output-contract.mdc`
-- Backend / frontend / database / DevOps → auto-attached via file globs
+- HTTP / Eloquent / jobs / tests / frontend / DevOps → auto-attached via file globs
 - Always on: this file and `01-graphify.mdc`
 
 ## Prohibited behaviors
 
 - Unrelated changes, broad rewrites, ignoring existing architecture
-- Disabling lint/typecheck/validation/security to make errors disappear
+- Disabling lint, Pint, PHPStan/Larastan, tests, or security checks to make errors disappear
 - Hardcoding env-specific values or exposing secrets
 - Fake tests, fake validation results, claiming commands ran when they did not
 - Destructive DB changes without explicit approval
 - Hiding errors in broad try/catch, speculative abstractions, cross-file reformatting
 - Spawning extra subagents to "be thorough" on a task the parent can do
 - Inferring subagents from task type, or stalling to ask which agent to use on an unnamed prompt
+- Teaching Laravel 101 that Boost or the model already knows; write only project conventions and prohibitions
 
 ## User-settings duplication (outside git)
 
-If Cursor **User Rules** still contain the long "Software Implementation Skill Rule", it duplicates this file and the agent-requested gates — disable or shorten it. Harness plugin always-on rules belong to a different repo; disable that plugin in this workspace if present. See `.cursor/eval-rubric.md`.
+If Cursor **User Rules** still contain the long "Software Implementation Skill Rule", it duplicates this file and the agent-requested gates — disable or shorten it. Harness plugin always-on rules belong to a different repo; disable that plugin in this workspace if present.

@@ -1,6 +1,6 @@
 ---
 name: mobile-ios-design
-description: Native iOS HIG and SwiftUI. Read only when the user asks for native iOS/SwiftUI work. Skip for this Quasar/NestJS web app unless they explicitly ask.
+description: Native iOS HIG and SwiftUI. Read only when the user asks for native iOS/SwiftUI work. Skip for this Laravel web/API app unless they explicitly ask.
 ---
 
 # iOS Mobile Design

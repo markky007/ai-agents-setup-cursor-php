@@ -23,7 +23,7 @@ Omit unnecessary explanations unrelated to the task.
 
 ## Quality Review
 
-- Code quality, typing, security, performance, deployment considerations (relevant gates only)
+- Code quality, static analysis, security, performance, deployment considerations (relevant gates only)
 
 ## Risks / Notes
 

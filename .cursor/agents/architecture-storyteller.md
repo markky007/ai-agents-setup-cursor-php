@@ -1,6 +1,7 @@
 ---
 name: architecture-storyteller
 model: inherit
+readonly: true
 description: Story/analogy explanations of architecture. Invoke only when the user names this agent. Skip: unnamed prompts; implementation; audits; architecture decisions (principal-engineer).
 ---
 

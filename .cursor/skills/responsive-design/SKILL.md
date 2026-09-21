@@ -1,6 +1,6 @@
 ---
 name: responsive-design
-description: Container queries, fluid type, and CSS-grid breakpoint strategy. Read when the user asks for that, beyond existing Quasar breakpoints. Skip ordinary responsive tweaks the parent can do with Quasar grid.
+description: Container queries, fluid type, and CSS-grid breakpoint strategy. Read when the user asks for that, beyond the app's existing breakpoints. Skip ordinary responsive tweaks the parent can do with the project's layout system.
 ---
 
 # Responsive Design

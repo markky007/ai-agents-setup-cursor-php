@@ -1,0 +1,15 @@
+---
+description: Optional Inertia — enable when inertiajs/inertia-laravel is in composer.json
+globs: "resources/js/**,resources/js/Pages/**,app/Http/Middleware/HandleInertiaRequests.php"
+alwaysApply: false
+---
+
+# Inertia (optional)
+
+Copy this rule into the app's `.cursor/rules/` only when Inertia is installed. Skip for API-only apps.
+
+Match the client already in the repo (Vue, React, or Svelte). Prefer Boost `inertia-*-development` in the app when Boost installed it.
+
+**Do:** share only props the page needs; keep authz on the Laravel side; use existing page/layout conventions.
+
+**Don't:** put secrets in Inertia shared data; duplicate FormRequest rules only on the client; introduce a second client framework.

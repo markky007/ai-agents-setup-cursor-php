@@ -1,0 +1,37 @@
+---
+description: Laravel HTTP layer — controllers, routes, FormRequests, policies, API resources
+globs: "app/Http/**,routes/**,app/Policies/**"
+alwaysApply: false
+---
+
+# HTTP / API
+
+Follow the app's existing controller style (invokable, resource, or Action class). Do not introduce a second pattern.
+
+Keep controllers thin: authorize, validate, call application code, return a response. Put multi-step writes in a service/action **only if the app already uses that layer**.
+
+**Do:** FormRequest (or the app's existing validator) for request input; Policy/Gate or FormRequest `authorize()` for protected actions; Eloquent API Resources when the app already uses them.
+
+**Don't:** validate only in the controller when siblings use FormRequest; authorize only in the UI; return raw models with hidden credentials; call `env()` here; load unbounded relations on the request path.
+
+```php
+// Don't — untrusted input + no authorize
+public function update(Request $request, Post $post)
+{
+    $post->update($request->all());
+}
+
+// Do — match FormRequest + policy already in the app
+public function update(UpdatePostRequest $request, Post $post)
+{
+    $this->authorize('update', $post);
+    $post->update($request->validated());
+    return PostResource::make($post);
+}
+```
+
+Do not change database schema from this layer unless the task requires it (then follow `52-eloquent.mdc`).
+
+## Fullstack contract
+
+When UI is in-repo, trace: form → FormRequest → controller → model/job → resource/JSON → UI states (loading/error/empty/permission). Do not duplicate business rules in the frontend.

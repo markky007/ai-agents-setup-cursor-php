@@ -1,0 +1,25 @@
+---
+description: Eloquent models, migrations, factories, and seeders — schema safety
+globs: "app/Models/**,database/migrations/**,database/seeders/**,database/factories/**"
+alwaysApply: false
+---
+
+# Eloquent & migrations
+
+Inspect current schema, relations, indexes, and query patterns before changing anything. Prefer backward-compatible migrations. Never drop tables, columns, or data without explicit instruction.
+
+Keep models, migrations, factories, and API contracts consistent. Destructive changes require explicit approval.
+
+**Do:** `$fillable` (or the app's existing guard convention) for request-derived writes; eager-load relations you will iterate; anonymous migrations if that is already the app style.
+
+**Don't:** `$guarded = []` plus `$request->all()`; `Schema::drop` in production paths without approval; `User::all()` then `$user->posts` in a loop (N+1).
+
+```php
+// Don't
+Post::all()->each(fn ($post) => $post->author->name);
+
+// Do
+Post::query()->with('author')->paginate();
+```
+
+If schema changes are required, include: the migration file, a data-preservation strategy, rollback consideration, and deployment safety notes. Minimal migration size does not justify skipping safety.

@@ -1,6 +1,6 @@
 ---
 name: accessibility-compliance
-description: WCAG 2.2 / ARIA / screen-reader audit. Read when the user asks for accessibility work. Skip ordinary UI — rule 51 covers baseline labels/keyboard/contrast.
+description: WCAG 2.2 / ARIA / screen-reader audit. Read when the user asks for accessibility work. Skip ordinary UI — optional 51-* frontend rules cover baseline labels/keyboard/contrast when attached.
 ---
 
 # Accessibility Compliance

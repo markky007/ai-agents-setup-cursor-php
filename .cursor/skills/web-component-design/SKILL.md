@@ -1,6 +1,6 @@
 ---
 name: web-component-design
-description: Component-library APIs and composition patterns. Read when building a reusable component library. Skip ordinary page/feature UI in this Quasar app.
+description: Component-library APIs and composition patterns. Read when building a reusable component library. Skip ordinary page/feature UI.
 ---
 
 # Web Component Design
