@@ -1,0 +1,24 @@
+{
+  "name": "ai-agents-setup-cursor-php",
+  "version": "1.0.0",
+  "description": "Cursor workspace pack: rules, agents, skills, and commands for Laravel apps.",
+  "bin": {
+    "ai-agents-setup-cursor-php": "./bin/install.mjs"
+  },
+  "type": "module",
+  "files": [
+    "bin",
+    ".cursor"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markky007/ai-agents-setup-cursor-php.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markky007/ai-agents-setup-cursor-php/issues"
+  },
+  "homepage": "https://github.com/markky007/ai-agents-setup-cursor-php#readme"
+}

@@ -26,20 +26,41 @@ If Boost generates `AGENTS.md`, treat it as Laravel ecosystem guidance, not a re
 ## Prerequisites
 
 - [Cursor](https://cursor.com)
+- Node.js 18+ (for `npx`)
 - Optional: Graphify CLI (`graphify` on `PATH`) when the app has `graphify-out/graph.json`. PHP AST is supported by graphifyy; quality on a given Laravel tree is unverified until you build a graph.
 
-## Install into a Laravel app
+## Install
 
-Cursor reads `.cursor/` in the application repo. From this pack:
+From the **Laravel application** repo (the one you want Cursor to work in), not this pack:
+
+```bash
+cd /path/to/your-laravel-app
+npx --yes github:markky007/ai-agents-setup-cursor-php
+```
+
+That copies **only** `.cursor/` into the current directory.
+
+| Flag | Behavior |
+| --- | --- |
+| (none) | Merge: create missing files; leave existing `.cursor/` files untouched |
+| `--force` | Overwrite colliding files under `.cursor/` |
+| `--dry-run` | Print the copy/skip plan; write nothing |
+
+Pass flags after `--` so `npx` does not swallow them:
+
+```bash
+npx --yes github:markky007/ai-agents-setup-cursor-php -- --dry-run
+npx --yes github:markky007/ai-agents-setup-cursor-php -- --force
+```
+
+Manual alternative:
 
 ```bash
 rsync -a \
   /path/to/ai-agents-php/.cursor/ /path/to/your-laravel-app/.cursor/
 ```
 
-Do not overwrite files you already customized unless you intend to. Reload the Cursor window.
-
-Optional frontend rules are included. Delete the `51-*.mdc` files you do not need after copy.
+Then open the app folder as a Cursor workspace (reload the window if it was already open). Optional frontend rules are included; delete the `51-*.mdc` files you do not need after copy.
 
 ## How it works
 
@@ -113,7 +134,7 @@ Name the agent in the prompt for Mode B.
 
 ## Adapt to another repo
 
-1. Copy this repo's `.cursor/` into the Laravel app `.cursor/`.
+1. Install into the Laravel app root as above.
 2. Edit globs if paths are not the Laravel skeleton.
 3. Install Boost in the app.
 4. Enable only the `51-*` rule files that match the UI.
@@ -124,8 +145,17 @@ Name the agent in the prompt for Mode B.
 
 - Application source
 - Laravel Boost skills or `mcp.json`
-- A Composer or npm publish of this pack
+- An npm registry publish — install from GitHub with `npx` as shown above
 
 ## User Rules
 
 Disable any Cursor User Rule that duplicates Implementation Core (the long "Software Implementation Skill Rule").
+
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| Agents or skills do not appear | Reload the Cursor window; confirm files exist under `.cursor/agents/` and `.cursor/skills/*/SKILL.md` |
+| `npx` copied nothing new | Merge mode skipped existing files — use `--dry-run` to see skips, `--force` to overwrite |
+| Ran `npx` inside this pack | Installer detects same-folder `.cursor/` and exits; run it from the **Laravel app** repo |
+| `npx` cannot find the GitHub repo | This pack must be pushed to `github:markky007/ai-agents-setup-cursor-php` (or change the slug in `package.json` / README) |
