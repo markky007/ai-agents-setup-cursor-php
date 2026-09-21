@@ -1,0 +1,18 @@
+---
+description: Database schema and migration safety for TypeORM entities and migrations
+globs: "apps/backend/**/*.entity.ts,apps/backend/**/migrations/**,apps/backend/**/seeds/**,apps/backend/**/*.migration.ts,apps/backend/**/ormconfig.*"
+alwaysApply: false
+---
+
+# Database & Migrations
+
+- Inspect current schema, relations, constraints, indexes, and access patterns first
+- Avoid schema changes unless required; prefer backward-compatible migrations
+- Never drop tables, columns, or data without explicit instruction; preserve existing data
+- Consider production data volume; avoid long-running locks
+- Use transactions for data migrations where appropriate
+- Keep entities/models, migrations, seeds, and API contracts consistent
+
+If schema changes are required, include: the migration file, a data-preservation strategy, rollback consideration, and deployment safety notes.
+
+Destructive changes require explicit approval. Minimal migration size does not justify skipping safety or rollback notes.

@@ -1,0 +1,59 @@
+---
+description: Security, performance, code-quality, testing, and deployment-readiness gates. Apply when implementing, fixing, refactoring, deploying, or reviewing production code.
+alwaysApply: false
+---
+
+# Quality Gates
+
+Apply every **relevant** gate before finishing. Gates outrank Ponytail minimalism when they conflict.
+
+## Security
+
+- No hardcoded secrets; tokens/passwords/private keys/API keys stay backend-only
+- No sensitive data logged
+- Backend authorization enforced; frontend checks are never the only protection
+- Input validated and sanitized
+- Injection, XSS, CSRF, SSRF, path traversal, open redirects considered where applicable
+- Stack traces and internal errors not exposed to users
+
+If the task touches auth, roles, users, payments, credentials, files, or sensitive records, explicitly review security impact.
+
+## Performance
+
+- No unbounded queries; no avoidable N+1; no needless round trips
+- Large workloads: pagination, batching, streaming, chunking, queues, or background jobs
+- No expensive work in render/request loops
+- Caching only when invalidation is clear
+- Prefer DB-side filtering for large datasets; no blocking work on request/response paths
+
+Performance work must not reduce correctness, security, or maintainability.
+
+## Code quality
+
+- Simple, readable, maintainable; descriptive names; small focused functions
+- Guard clauses over deep nesting; no duplicated logic; no magic numbers
+- No unused imports/variables, dead code, or obsolete comments
+- Comments explain why, not what
+- Preserve existing formatting, lint, and typing rules
+- No unnecessary dependencies, speculative abstractions, or unrelated file changes
+
+Avoid `any`, unsafe casts, disabled lint rules, and broad try/catch unless unavoidable — if unavoidable, isolate and explain.
+
+## Testing & validation
+
+Run the most relevant available commands from project scripts (lint, typecheck, test variants, build, format check, migration test, docker build, CI dry run). Use the repo's package manager. Do not invent commands. Do not claim a command ran unless it did.
+
+If validation cannot run, state which command, why not, and what manual verification was done.
+
+Ponytail's "one check" for non-trivial logic supplements — it does not replace — this gate.
+
+## Deployment readiness
+
+- Required env vars documented; no secrets exposed
+- Build works or is documented
+- Migrations safe and ordered; backward compatibility where required
+- API contract changes documented; rollback noted when relevant
+- Health/readiness considered for deployment work
+- CI/CD minimal and deterministic; images contain no secrets; prod config separate from local/dev
+
+If deployment is not part of the task, still note whether any deployment risk exists.

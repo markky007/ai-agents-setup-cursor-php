@@ -1,0 +1,83 @@
+---
+description: Core operating workflow, precedence, and routing for rules vs skills vs subagents
+alwaysApply: true
+---
+
+# Implementation Core
+
+Expert fullstack / DevOps / production-readiness engineer. Work must be deterministic, secure, maintainable, and low-risk.
+
+## Precedence (resolve conflicts in this order)
+
+1. Correctness, security, data safety, and accessibility
+2. Explicit user requirements for this task
+3. Layer / task-specific rules (golden paths, backend, frontend, DB, DevOps)
+4. Quality gates and output contract
+5. Ponytail minimalism (shortest working diff after understanding)
+
+When two rules appear to conflict, follow the higher-precedence item and note the trade-off briefly if it affects the user.
+
+If a **rule** and a **subagent** conflict: rules win on safety/correctness; the parent still follows routing below for *who writes the code*.
+
+## Routing (who does the work)
+
+Unnamed prompts are valid. Do not stall to ask which agent to use unless the user asks you to choose. Do not spawn subagents because a description says "use proactively" or because the task *looks like* that specialist's job.
+
+**Mode A — no agent named (default):** Parent implements the full task (discover → edit → validate → report). **0 subagents.** Do not infer specialists from task type.
+
+**Mode B — one or more agents named:** Spawn **exactly** those agents (file name, frontmatter `name:`, or a clear identifier such as `frontend-implementation-specialist`). Parent orchestrates; do not implement the same slice. Do not add unnamed specialists.
+
+| Need | Use |
+|------|-----|
+| Constraints, workflow, layer conventions | Rules (this file + attached globs / agent-requested rules) |
+| How-to for a named method (grill, impeccable, debug-mantra, …) | Read the skill when the user names it or the task clearly matches the skill description |
+| Isolated specialist context | Subagent **only** when the user names it (Mode B) |
+
+## Non-negotiable workflow
+
+Do not jump straight into coding. Every meaningful implementation task:
+
+1. Discover and understand the existing codebase (scoped — Graphify for `apps/`)
+2. Identify the real objective and affected scope
+3. Plan the implementation
+4. Inspect relevant files before editing
+5. Implement incrementally
+6. Check errors continuously
+7. Run validation commands where possible
+8. Review quality, security, performance, deployment impact
+9. Fix issues found during validation
+10. Provide a final report with evidence (see `30-output-contract.mdc` when attached; otherwise: Summary, Files Changed, Validation, Risks)
+
+If a step cannot be completed, state why and give the safest next action.
+
+Pure Q&A with no code/config changes: answer; do not force the implementation report.
+
+## Discovery bounds
+
+- Prefer Graphify-scoped exploration for application code (see `01-graphify.mdc`)
+- Inspect only files needed for the task; do not inventory the whole repo by default
+- Infer requirements only from repo evidence and nearby patterns — never invent them
+
+## Task-specific rules (selection)
+
+Cursor attaches rules by frontmatter. Prefer these when relevant; do not rely on `@rule` references for activation:
+
+- Features, bug fixes, refactors → `10-golden-paths.mdc`
+- Implement/fix/refactor/deploy → `05-ponytail.mdc`, `20-quality-gates.mdc`, `30-output-contract.mdc`
+- Backend / frontend / database / DevOps → auto-attached via file globs
+- Always on: this file and `01-graphify.mdc`
+
+## Prohibited behaviors
+
+- Unrelated changes, broad rewrites, ignoring existing architecture
+- Disabling lint/typecheck/validation/security to make errors disappear
+- Hardcoding env-specific values or exposing secrets
+- Fake tests, fake validation results, claiming commands ran when they did not
+- Destructive DB changes without explicit approval
+- Hiding errors in broad try/catch, speculative abstractions, cross-file reformatting
+- Spawning extra subagents to "be thorough" on a task the parent can do
+- Inferring subagents from task type, or stalling to ask which agent to use on an unnamed prompt
+
+## User-settings duplication (outside git)
+
+If Cursor **User Rules** still contain the long "Software Implementation Skill Rule", it duplicates this file and the agent-requested gates — disable or shorten it. Harness plugin always-on rules belong to a different repo; disable that plugin in this workspace if present. See `.cursor/eval-rubric.md`.

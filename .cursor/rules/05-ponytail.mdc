@@ -1,0 +1,47 @@
+---
+description: Ponytail — shortest working diff after understanding. Apply when implementing, fixing, refactoring, or reviewing code changes.
+alwaysApply: false
+---
+
+# Ponytail, lazy senior mode
+
+Lazy means efficient, not careless. The best code is the code never written.
+
+Ponytail ranks **below** correctness, security, data safety, accessibility, and explicit user requirements (see Implementation Core precedence). Minimalism never excuses skipping discovery, root-cause analysis, or quality gates.
+
+## Before writing code
+
+Understand first: read the task and the code it touches, trace the real flow end to end (use Graphify for app code), then climb the ladder. A small diff you do not understand is not lazy — it is a second bug.
+
+Stop at the first rung that holds:
+
+1. Does this need to be built at all? (YAGNI)
+2. Does it already exist in this codebase? Reuse it — do not rewrite
+3. Does the standard library already do this? Use it
+4. Does a native platform feature cover it? Use it
+5. Does an already-installed dependency solve it? Use it
+6. Can this be one clear line without hurting readability or edge-case correctness? Prefer that
+7. Only then: write the minimum code that works
+
+## Bug fixes
+
+Root cause, not symptom. Prefer Graphify (`path` / `query`) to find callers of the function you touch; fix the shared function once. Patching only the ticket path while a sibling caller stays broken is incomplete.
+
+## Rules
+
+- No abstractions that were not explicitly requested
+- No new dependency if avoidable
+- No boilerplate nobody asked for
+- Deletion over addition when behavior is preserved; boring over clever; fewest files possible
+- Shortest **correct** working diff wins — wrong-place small diffs do not count
+- Question complex requests: "Do you actually need X, or does Y cover it?"
+- When two stdlib approaches are the same size, pick the edge-case-correct one
+- Mark deliberate simplifications that cut a real corner with a known ceiling (global lock, O(n²) scan, naive heuristic) with a `ponytail:` comment naming the ceiling and upgrade path
+
+## Not lazy about
+
+Understanding the problem; input validation at trust boundaries; error handling that prevents data loss; security; accessibility; hardware/platform calibration when relevant; anything the user explicitly requested; existing project validation (lint/typecheck/tests per quality gates).
+
+## Checks
+
+Non-trivial logic leaves **one** runnable check that fails if the logic breaks — prefer extending an existing project test over inventing a parallel harness. Use a tiny assert/demo only when no project test path fits. Trivial one-liners need no new test. That one check supplements — it does not replace — project quality-gate validation. Never weaken or skip required gates to stay "minimal."

@@ -1,0 +1,29 @@
+---
+description: DevOps, CI/CD, Docker, and deployment configuration work
+globs: "**/Dockerfile,**/docker-compose*.yml,**/.gitlab-ci.yml,**/.gitlab/**/*.yml,**/azure-pipelines*.yml,**/.github/workflows/**,**/k8s/**,**/*.env.example,apps/**/scripts/**,**/helm/**"
+alwaysApply: false
+---
+
+# DevOps, CI/CD & Deployment
+
+When modifying DevOps, CI/CD, Docker, environment, or deployment config:
+
+1. Inspect the existing pipeline and deployment flow first
+2. Preserve current build/test/lint/typecheck/package/deploy stages unless change is required
+3. Identify required environment variables
+4. Ensure secrets are never committed, logged, or copied into images
+5. Prefer deterministic versions and reproducible builds
+6. Validate local and CI behavior where possible
+7. Consider rollback, health checks, readiness checks, and deployment order
+8. Document required runtime configuration
+9. Report deployment risks clearly
+
+Do not introduce steps that can leave the system partially broken. Prefer smallest safe config change (Ponytail) without skipping security or rollback considerations.
+
+## Observability & logging
+
+- Use existing logger patterns; log meaningful operational events with enough debug context
+- Never log secrets, tokens, passwords, personal data, or sensitive payloads
+- Prefer structured logging where supported
+- Errors observable without exposing internals to users
+- Add metrics/tracing only when useful and consistent with existing infrastructure

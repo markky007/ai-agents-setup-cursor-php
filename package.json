@@ -1,0 +1,24 @@
+{
+  "name": "ai-agents-setup-cursor",
+  "version": "1.0.0",
+  "description": "Cursor workspace pack: rules, agents, skills, and commands for NestJS + Quasar apps.",
+  "bin": {
+    "ai-agents-setup-cursor": "./bin/install.mjs"
+  },
+  "type": "module",
+  "files": [
+    "bin",
+    ".cursor"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markky007/ai-agents-setup-cursor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markky007/ai-agents-setup-cursor/issues"
+  },
+  "homepage": "https://github.com/markky007/ai-agents-setup-cursor#readme"
+}

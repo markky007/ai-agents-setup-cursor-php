@@ -1,0 +1,23 @@
+---
+description: Backend NestJS engineering conventions under apps/backend
+globs: "apps/backend/**/*.controller.ts,apps/backend/**/*.service.ts,apps/backend/**/*.module.ts,apps/backend/**/*.dto.ts,apps/backend/**/*.guard.ts,apps/backend/**/*.interceptor.ts,apps/backend/**/*.middleware.ts,apps/backend/**/*.repository.ts,apps/backend/**/*.pipe.ts"
+alwaysApply: false
+---
+
+# Backend Engineering
+
+- Follow existing NestJS / project conventions
+- Keep controllers/routes thin; put business logic in services, use cases, or domain layers
+- Use existing DTOs, schemas, validators, and pipes; validate all external input
+- Sanitize and normalize data before persistence where appropriate
+- Preserve auth/authz checks — never bypass permission logic for convenience
+- Use transactions for multi-step writes that must be atomic
+- Avoid N+1 queries and loading unbounded datasets
+- Return consistent error shapes; do not leak stack traces, secrets, tokens, or infra details
+- Use domain-specific errors where the project already has that pattern
+
+Do not change database schema unless the task explicitly requires it (then follow the database rule).
+
+## Fullstack contract consistency
+
+When working across layers, trace: UI state → interaction → form → validation → API client → request → controller → DTO/validator → service → DB → response → frontend state → loading/error/success/empty. Keep contracts explicit; do not duplicate business logic across layers unless unavoidable.

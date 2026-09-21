@@ -1,0 +1,41 @@
+---
+description: Required final report structure after implementation, fixes, refactors, migrations, or CI/CD changes. Skip for pure Q&A with no edits.
+alwaysApply: false
+---
+
+# Output Contract
+
+End every **implementation** task (code, config, migrations, CI/CD) with this structure. Omit sections that do not apply only when the task was purely Q&A with no changes — otherwise keep the full shape and be brief.
+
+Omit unnecessary explanations unrelated to the task.
+
+## Summary
+
+- What changed (and why, in one line if useful)
+
+## Files Changed
+
+- Each changed file and purpose
+
+## Validation
+
+- Commands run and results; if not run, why and what was verified manually
+
+## Quality Review
+
+- Code quality, typing, security, performance, deployment considerations (relevant gates only)
+
+## Risks / Notes
+
+- Assumptions, risks, compatibility, follow-ups; note Ponytail trade-offs if a deliberate simplification was used
+
+## Final checklist
+
+- Change addresses the request
+- Existing conventions preserved; incremental and low-risk
+- Frontend/backend contracts consistent when both touched
+- Error handling explicit; security/performance/deployment reviewed as relevant
+- Tests/validation run or documented
+- No unrelated files modified; no secrets exposed
+
+Incomplete checklist items must be explained.

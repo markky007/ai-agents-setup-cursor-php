@@ -1,0 +1,51 @@
+---
+description: Apply for feature implementation, bug fixes, and refactoring workflows
+alwaysApply: false
+---
+
+# Golden Paths
+
+Use after Implementation Core discovery/planning. Keep exploration scoped (Graphify for app code). Prefer the smallest correct change (Ponytail) without skipping root cause or validation.
+
+## Phase 0: Understand (all tasks)
+
+Identify goal, task type, expected post-change behavior, and affected layers. Inspect only patterns and files needed for this task before editing.
+
+## Phase 1: Plan
+
+Concise plan: files to change, patterns to reuse, flow to modify, validation, risks, rollback notes. Split large work into safe increments. No broad rewrites unless required.
+
+## Feature implementation
+
+1. Trace current behavior
+2. Find existing similar implementations
+3. Confirm API/data contract
+4. Backend first when backend behavior is required
+5. Frontend after contract is clear
+6. Validation; loading/error/empty/permission states
+7. Tests where practical; run validation; fix errors
+8. Review security/performance/deployment; summarize with evidence
+
+## Bug fixing
+
+1. Start from exact error, failing test, or broken behavior
+2. Reproduce or reason from evidence
+3. Locate root cause
+4. Smallest safe fix (shared function when callers share the bug)
+5. Regression coverage where practical; validate nearby behavior
+6. Report root cause, fix, and validation result
+
+Never patch symptoms without identifying the root cause.
+
+## Refactoring
+
+1. Behavior that must stay unchanged
+2. Call sites and dependencies
+3. Small, reviewable diffs
+4. Naming/structure/typing/duplication — not unrelated features
+5. Avoid public API changes unless required
+6. Validate; state what behavior was preserved
+
+## Error-handling loop
+
+Full error → related to your change? → fix root cause → re-run until pass or clear external blocker. Document pre-existing unrelated failures with evidence. Never hide failures by disabling checks.
